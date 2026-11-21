@@ -20,6 +20,31 @@ st.markdown("""
 <style>
     .stApp {
         background-color: #f4f6f9;
+        color: #0f172a;
+    }
+    /* Forzar contraste oscuro en textos, pestañas, labels y subtítulos */
+    .stApp p, .stApp label, .stApp span, .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
+        color: #0f172a !important;
+    }
+    /* Mantener texto blanco dentro de la barra lateral oscura */
+    section[data-testid="stSidebar"] p,
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] span,
+    section[data-testid="stSidebar"] h1,
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3 {
+        color: #f8fafc !important;
+    }
+    /* Botones claros con texto oscuro legible */
+    .stButton > button {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        border: 1px solid #cbd5e1 !important;
+        font-weight: 600 !important;
+    }
+    .stButton > button:hover {
+        border-color: #2563eb !important;
+        color: #2563eb !important;
     }
     .sandbox-header {
         display: flex;
@@ -30,20 +55,20 @@ st.markdown("""
     .sandbox-title {
         font-size: 1.85rem;
         font-weight: 800;
-        color: #1e293b;
+        color: #0f172a !important;
         margin: 0;
     }
     .sandbox-pill {
         background-color: #e2e8f0;
-        color: #475569;
+        color: #334155 !important;
         font-size: 0.82rem;
-        font-weight: 600;
+        font-weight: 700;
         padding: 4px 12px;
         border-radius: 999px;
     }
     .badge-green {
         background-color: #dcfce7;
-        color: #166534;
+        color: #166534 !important;
         padding: 3px 10px;
         border-radius: 999px;
         font-size: 0.78rem;
@@ -52,7 +77,7 @@ st.markdown("""
     }
     .badge-blue {
         background-color: #dbeafe;
-        color: #1e40af;
+        color: #1e40af !important;
         padding: 3px 10px;
         border-radius: 999px;
         font-size: 0.78rem;
@@ -61,7 +86,7 @@ st.markdown("""
     }
     .badge-red {
         background-color: #fee2e2;
-        color: #991b1b;
+        color: #991b1b !important;
         padding: 3px 10px;
         border-radius: 999px;
         font-size: 0.78rem;
@@ -70,7 +95,7 @@ st.markdown("""
     }
     .badge-amber {
         background-color: #fef3c7;
-        color: #92400e;
+        color: #92400e !important;
         padding: 3px 10px;
         border-radius: 999px;
         font-size: 0.78rem;
@@ -78,21 +103,28 @@ st.markdown("""
         border: 1px solid #fcd34d;
     }
     .telemetry-card {
-        background-color: #f8fafc;
-        border-left: 4px solid #3b82f6;
+        background-color: #ffffff;
+        border-left: 4px solid #2563eb;
         padding: 8px 12px;
         border-radius: 6px;
         margin-bottom: 8px;
-        border-top: 1px solid #e2e8f0;
-        border-right: 1px solid #e2e8f0;
-        border-bottom: 1px solid #e2e8f0;
+        border-top: 1px solid #cbd5e1;
+        border-right: 1px solid #cbd5e1;
+        border-bottom: 1px solid #cbd5e1;
     }
     .telemetry-label {
         font-size: 0.74rem;
-        color: #64748b;
-        font-weight: 600;
+        color: #475569 !important;
+        font-weight: 700;
         text-transform: uppercase;
     }
+    .telemetry-val {
+        font-size: 1.15rem;
+        color: #0f172a !important;
+        font-weight: 800;
+    }
+</style>
+""", unsafe_allow_html=True)
     .telemetry-val {
         font-size: 1.15rem;
         color: #0f172a;
