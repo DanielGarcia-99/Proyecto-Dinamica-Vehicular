@@ -25,13 +25,31 @@ st.markdown("""
     .stApp p, .stApp label, .stApp span, .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
         color: #0f172a !important;
     }
+    section[data-testid="stSidebar"] {
+        background-color: #eef2f6 !important;
+        border-right: 1px solid #cbd5e1 !important;
+    }
     section[data-testid="stSidebar"] p,
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] span,
     section[data-testid="stSidebar"] h1,
     section[data-testid="stSidebar"] h2,
-    section[data-testid="stSidebar"] h3 {
-        color: #f8fafc !important;
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] * {
+        color: #0f172a !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stChatMessage"] {
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 10px !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stChatMessage"] * {
+        color: #0f172a !important;
+    }
+    section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
     }
     .stButton > button {
         background-color: #ffffff !important;
