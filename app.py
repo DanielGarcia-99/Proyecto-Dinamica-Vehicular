@@ -208,87 +208,88 @@ def calcular_dugoff_lat(alpha_deg, Fz, mu, C_alpha):
     return signo * Fy
 
 # ==============================================================================
-# DIBUJO TÉCNICO EN VISTA SUPERIOR DEL VEHÍCULO (ESTILO SANDBOX CAD)
+# DIBUJO TÉCNICO: MODELO DE BICICLETA (SINGLE-TRACK MODEL)
 # ==============================================================================
-def dibujar_chasis_top_view(ax, a, b, delta_in_deg=0.0, delta_out_deg=0.0, modo="bicicleta", porcentaje_peso_f=50.0):
+def dibujar_modelo_bicicleta(ax, a, b, delta_in_deg=0.0, delta_out_deg=0.0, W=1.60, modo="bicicleta", porcentaje_peso_f=50.0):
     L = a + b
-    W = 1.65
     ax.clear()
 
-    x_frente = -0.55
-    x_trasera = L + 0.55
-    ancho_auto = W * 0.54
-
-    carroceria = patches.FancyBboxPatch(
-        (x_frente, -ancho_auto),
-        x_trasera - x_frente,
-        2 * ancho_auto,
-        boxstyle="round,pad=0.08,rounding_size=0.38",
-        linewidth=1.8,
-        edgecolor="#475569",
-        facecolor="#f1f5f9",
-        zorder=2
-    )
-    ax.add_patch(carroceria)
-
-    parabrisas = patches.Polygon(
-        [[0.25, -ancho_auto*0.78], [0.75, -ancho_auto*0.65], [0.75, ancho_auto*0.65], [0.25, ancho_auto*0.78]],
-        closed=True, facecolor="#cbd5e1", edgecolor="#64748b", lw=1.1, zorder=3
-    )
-    medallon = patches.Polygon(
-        [[L-0.55, -ancho_auto*0.65], [L-0.15, -ancho_auto*0.75], [L-0.15, ancho_auto*0.75], [L-0.55, ancho_auto*0.65]],
-        closed=True, facecolor="#cbd5e1", edgecolor="#64748b", lw=1.1, zorder=3
-    )
-    ax.add_patch(parabrisas)
-    ax.add_patch(medallon)
-
-    ax.plot([0, 0], [-W/2, W/2], color="#64748b", lw=2.0, zorder=3)
-    ax.plot([L, L], [-W/2, W/2], color="#64748b", lw=2.0, zorder=3)
-    ax.plot([0, L], [0, 0], color="#94a3b8", lw=1.0, ls="--", zorder=3)
-
-    def dibujar_rueda(cx, cy, ang_deg, color_fill="#334155"):
-        rw, rh = 0.54, 0.22
+    def dibujar_rueda(cx, cy, ang_deg, color_fill="#1e293b", rw=0.58, rh=0.20, alpha=1.0):
         rect = patches.FancyBboxPatch(
             (-rw/2, -rh/2), rw, rh,
-            boxstyle="round,pad=0.01,rounding_size=0.05",
-            facecolor=color_fill, edgecolor="#0f172a", lw=1.2, zorder=5
+            boxstyle="round,pad=0.01,rounding_size=0.04",
+            facecolor=color_fill, edgecolor="#0f172a", lw=1.3, alpha=alpha, zorder=5
         )
         t = plt.matplotlib.transforms.Affine2D().rotate_deg(ang_deg).translate(cx, cy) + ax.transData
         rect.set_transform(t)
         ax.add_patch(rect)
 
-    dibujar_rueda(L, W/2, 0)
-    dibujar_rueda(L, -W/2, 0)
-    dibujar_rueda(0, W/2, delta_in_deg, "#1e3a8a" if modo == "ackermann" else "#334155")
-    dibujar_rueda(0, -W/2, delta_out_deg, "#065f46" if modo == "ackermann" else "#334155")
+    # Eje longitudinal central (estructura single-track)
+    ax.plot([-0.35, L + 0.35], [0, 0], color="#cbd5e1", lw=1.0, ls=":", zorder=1)
+    ax.plot([0, L], [0, 0], color="#334155", lw=4.0, solid_capstyle="round", zorder=3)
 
     if modo == "bicicleta":
-        ax.plot(a, 0, 'o', markersize=14, markerfacecolor="#ffffff", markeredgecolor="#0f172a", markeredgewidth=2, zorder=7)
-        ax.plot(a, 0, 'o', markersize=6, color="#ef4444", zorder=8)
-        ax.text(a, 0.24, "CG", ha="center", va="bottom", fontsize=9.5, fontweight="bold", color="#0f172a", zorder=9)
+        # Rueda delantera única (eje central) y rueda trasera única (eje central)
+        dibujar_rueda(0, 0, 12.0, color_fill="#2563eb")
+        dibujar_rueda(L, 0, 0.0, color_fill="#334155")
 
-        y_cota = -ancho_auto - 0.32
-        ax.annotate("", xy=(0, y_cota), xytext=(a, y_cota), arrowprops=dict(arrowstyle="<->", color="#475569", lw=1.2))
-        ax.annotate("", xy=(a, y_cota), xytext=(L, y_cota), arrowprops=dict(arrowstyle="<->", color="#475569", lw=1.2))
-        ax.text(a/2, y_cota - 0.08, f"a = {a:.2f} m", ha="center", va="top", fontsize=8.5, color="#334155", fontweight="bold")
-        ax.text(a + b/2, y_cota - 0.08, f"b = {b:.2f} m", ha="center", va="top", fontsize=8.5, color="#334155", fontweight="bold")
+        # Línea de referencia del ángulo de dirección delantero
+        ax.plot([-0.45, 0.45], [0, 0], color="#64748b", lw=1.0, ls="--", zorder=4)
 
-        ax.annotate("", xy=(0, W/2 + 0.55), xytext=(0, W/2 + 0.12), arrowprops=dict(arrowstyle="->", color="#2563eb", lw=2.2))
-        ax.text(0.18, W/2 + 0.35, f"Fyf ({porcentaje_peso_f:.0f}%)", fontsize=8.5, color="#1d4ed8", fontweight="bold")
+        # Centro de Gravedad (CG) sobre la viga single-track
+        ax.plot(a, 0, 'o', markersize=16, markerfacecolor="#ffffff", markeredgecolor="#0f172a", markeredgewidth=2.2, zorder=7)
+        ax.plot(a, 0, 'o', markersize=7, color="#ef4444", zorder=8)
+        ax.text(a, -0.22, "CG", ha="center", va="top", fontsize=10, fontweight="bold", color="#0f172a", zorder=9)
 
-        ax.annotate("", xy=(L, W/2 + 0.55), xytext=(L, W/2 + 0.12), arrowprops=dict(arrowstyle="->", color="#dc2626", lw=2.2))
-        ax.text(L - 0.65, W/2 + 0.35, f"Fyr ({100-porcentaje_peso_f:.0f}%)", fontsize=8.5, color="#b91c1c", fontweight="bold")
+        # Cotas a y b
+        y_cota = -0.58
+        ax.plot([0, 0], [-0.15, y_cota - 0.05], color="#94a3b8", lw=0.9, ls=":")
+        ax.plot([a, a], [-0.15, y_cota - 0.05], color="#94a3b8", lw=0.9, ls=":")
+        ax.plot([L, L], [-0.15, y_cota - 0.05], color="#94a3b8", lw=0.9, ls=":")
 
-        ax.text(0, 0, "Frente", ha="left", va="center", fontsize=8, color="#475569", fontweight="bold",
-                bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor="#cbd5e1", alpha=0.9), zorder=6)
-        ax.text(L, 0, "Atrás", ha="right", va="center", fontsize=8, color="#475569", fontweight="bold",
-                bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor="#cbd5e1", alpha=0.9), zorder=6)
+        ax.annotate("", xy=(0, y_cota), xytext=(a, y_cota), arrowprops=dict(arrowstyle="<->", color="#475569", lw=1.3))
+        ax.annotate("", xy=(a, y_cota), xytext=(L, y_cota), arrowprops=dict(arrowstyle="<->", color="#475569", lw=1.3))
+        ax.text(a/2, y_cota - 0.08, f"a = {a:.2f} m", ha="center", va="top", fontsize=8.8, color="#334155", fontweight="bold")
+        ax.text(a + b/2, y_cota - 0.08, f"b = {b:.2f} m", ha="center", va="top", fontsize=8.8, color="#334155", fontweight="bold")
+
+        # Vectores de fuerza lateral Fyf y Fyr
+        ax.annotate("", xy=(0, 0.72), xytext=(0, 0.14), arrowprops=dict(arrowstyle="->", color="#2563eb", lw=2.4))
+        ax.text(0.08, 0.48, f"Fyf ({porcentaje_peso_f:.0f}%)", fontsize=9, color="#1d4ed8", fontweight="bold")
+
+        ax.annotate("", xy=(L, 0.72), xytext=(L, 0.14), arrowprops=dict(arrowstyle="->", color="#dc2626", lw=2.4))
+        ax.text(L - 0.68, 0.48, f"Fyr ({100-porcentaje_peso_f:.0f}%)", fontsize=9, color="#b91c1c", fontweight="bold")
+
+        # Etiquetas Front / Rear
+        ax.text(-0.38, 0.16, "Front", ha="center", va="bottom", fontsize=8.2, color="#475569", fontweight="bold",
+                bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor="#cbd5e1"))
+        ax.text(L + 0.38, 0.16, "Rear", ha="center", va="bottom", fontsize=8.2, color="#475569", fontweight="bold",
+                bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor="#cbd5e1"))
+
+        ax.set_xlim(-0.75, L + 0.75)
+        ax.set_ylim(-0.92, 0.95)
+
     else:
-        ax.text(-0.15, W/2 + 0.35, f"δ_in = {delta_in_deg:.1f}°", ha="center", fontsize=9, color="#1e3a8a", fontweight="bold")
-        ax.text(-0.15, -W/2 - 0.42, f"δ_out = {delta_out_deg:.1f}°", ha="center", fontsize=9, color="#065f46", fontweight="bold")
+        # Vista Single-Track + Cinemática Ackermann (sin carrocería completa)
+        semi_w = W / 2.0
+        delta_eq = (delta_in_deg + delta_out_deg) / 2.0
 
-    ax.set_xlim(x_frente - 0.35, x_trasera + 0.35)
-    ax.set_ylim(-W/2 - 0.75, W/2 + 0.78)
+        # Eje delantero transversal (trocha W) y rueda trasera única single-track
+        ax.plot([0, 0], [-semi_w, semi_w], color="#64748b", lw=2.2, ls="--", zorder=3)
+        dibujar_rueda(L, 0, 0.0, color_fill="#334155")
+
+        # Rueda equivalente central (single-track) + ruedas interna y externa
+        dibujar_rueda(0, 0, delta_eq, color_fill="#64748b", rw=0.50, rh=0.16, alpha=0.55)
+        dibujar_rueda(0, semi_w, delta_in_deg, color_fill="#1e3a8a")
+        dibujar_rueda(0, -semi_w, delta_out_deg, color_fill="#065f46")
+
+        ax.text(0.0, semi_w + 0.24, f"δ_in = {delta_in_deg:.1f}°", ha="center", fontsize=8.8, color="#1e3a8a", fontweight="bold")
+        ax.text(0.42, 0.0, f"δ_eq = {delta_eq:.1f}°", ha="left", va="center", fontsize=8.2, color="#475569", fontweight="bold")
+        ax.text(0.0, -semi_w - 0.30, f"δ_out = {delta_out_deg:.1f}°", ha="center", fontsize=8.8, color="#065f46", fontweight="bold")
+        ax.text(L / 2.0, -0.16, f"L = {L:.2f} m", ha="center", va="top", fontsize=8.5, color="#334155", fontweight="bold")
+
+        ax.set_xlim(-0.75, L + 0.65)
+        ax.set_ylim(-semi_w - 0.55, semi_w + 0.55)
+
     ax.set_aspect("equal")
     ax.axis("off")
 
@@ -312,7 +313,7 @@ MISIONES_PEDAGOGICAS = {
     ),
     "Misión 3 (Dirección): El secreto para dar vuelta sin arrastrar llantas": (
         "**[Paso 1 - Observación]** Ve a **3. Dirección Ackermann** y sube el ángulo de giro a `35°`. "
-        "Observa las dos ruedas delanteras en el chasis: ¿giran el mismo ángulo o la rueda interna gira más cerrada que la externa?"
+        "Observa las ruedas delanteras respecto al eje central: ¿giran el mismo ángulo o la rueda interna gira más cerrada que la externa?"
     ),
     "Misión 4 (Seguridad): El reto de frenado en lluvia (ABS)": (
         "**[Paso 1 - Reto Práctico]** Ve a **4. Frenado ABS**, selecciona **🌧️ Lluvia (100 km/h)**, "
@@ -525,7 +526,7 @@ with tab1:
     st.session_state.telemetria = f"[Neumáticos] Modelos={modelos_visibles}, Fz={Fz} N, mu={mu}, Fmax={D_max:.0f} N."
 
 # ------------------------------------------------------------------------------
-# PESTAÑA 2: MODELO BICICLETA (CON CHASIS CAD TOP-VIEW + CURVA SKIDPAD)
+# PESTAÑA 2: MODELO BICICLETA (SINGLE-TRACK MODEL + CURVA SKIDPAD)
 # ------------------------------------------------------------------------------
 with tab2:
     if "t2_a" not in st.session_state:
@@ -575,9 +576,9 @@ with tab2:
         st.markdown(f"### Handling Dynamics & Mass Distribution &nbsp; {badge_html}", unsafe_allow_html=True)
 
         with col_mid2:
-            st.markdown("**2-DoF Bicycle Model (Top View)**")
+            st.markdown("**2-DoF Single-Track Bicycle Model**")
             fig_car, ax_car = plt.subplots(figsize=(5.2, 3.8))
-            dibujar_chasis_top_view(ax_car, a, b, modo="bicicleta", porcentaje_peso_f=pct_front)
+            dibujar_modelo_bicicleta(ax_car, a, b, modo="bicicleta", porcentaje_peso_f=pct_front)
             plt.tight_layout()
             st.pyplot(fig_car)
             plt.close(fig_car)
@@ -615,7 +616,7 @@ with tab2:
     st.session_state.telemetria = f"[Modelo Bicicleta] Reparto={pct_front:.0f}%/{100-pct_front:.0f}%, Kus={Kus_deg_g:.2f} deg/g, Estado={estado_nombre}, V={vel_kmh} km/h."
 
 # ------------------------------------------------------------------------------
-# PESTAÑA 3: DIRECCIÓN ACKERMANN (CON CHASIS ORIENTABLE)
+# PESTAÑA 3: DIRECCIÓN ACKERMANN (SINGLE-TRACK + CINEMÁTICA DELANTERA)
 # ------------------------------------------------------------------------------
 with tab3:
     with st.container(border=True):
@@ -641,9 +642,9 @@ with tab3:
         diferencia_deg = delta_in_deg - delta_out_real_deg
 
         with c3_car:
-            st.markdown("**Front Wheels Steer Angle**")
+            st.markdown("**Single-Track & Front Steer Angles**")
             fig_ack_car, ax_ack_car = plt.subplots(figsize=(5.2, 3.8))
-            dibujar_chasis_top_view(ax_ack_car, L_ack * 0.45, L_ack * 0.55, delta_in_deg, delta_out_real_deg, modo="ackermann")
+            dibujar_modelo_bicicleta(ax_ack_car, L_ack * 0.45, L_ack * 0.55, delta_in_deg, delta_out_real_deg, W=W_ack, modo="ackermann")
             plt.tight_layout()
             st.pyplot(fig_ack_car)
             plt.close(fig_ack_car)
